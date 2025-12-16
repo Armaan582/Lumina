@@ -240,7 +240,7 @@
         .content-area {
             flex: 1;
             padding: 40px;
-            padding-bottom: 150px; 
+            padding-bottom: 250px; /* Increased to ensure scrolling space */
             overflow-y: auto;
             overflow-x: hidden;
             display: flex;
@@ -256,7 +256,7 @@
             max-width: 900px;
             display: none;
             animation: fadeIn 0.4s var(--ease) forwards;
-            padding-bottom: 20px;
+            padding-bottom: 40px;
         }
 
         .tool-view.active { display: block; }
@@ -273,7 +273,7 @@
             border-radius: 24px;
             padding: 24px;
             position: relative;
-            overflow: hidden;
+            /* REMOVED overflow:hidden to allow buttons to be seen if pushed */
             transition: border 0.3s;
             width: 100%;
         }
@@ -366,32 +366,36 @@
             display: flex;
             justify-content: center;
             margin-top: 25px;
+            padding-bottom: 10px;
         }
 
         .btn-download {
-            background: rgba(0,0,0,0.4);
+            background: rgba(0,0,0,0.6);
             color: white;
-            padding: 12px 28px;
+            padding: 14px 35px;
             border-radius: 12px;
             cursor: pointer;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 700;
             letter-spacing: 0.5px;
-            display: flex;
+            display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 12px;
             transition: all 0.3s ease;
             text-decoration: none;
-            border: 1px solid rgba(0, 242, 234, 0.3);
+            border: 1px solid var(--primary);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 0 15px rgba(0, 242, 234, 0.2);
+            z-index: 10;
         }
 
         .btn-download:hover {
-            background: rgba(0, 242, 234, 0.1);
-            border-color: var(--primary);
-            box-shadow: 0 0 20px rgba(0, 242, 234, 0.2);
-            transform: translateY(-2px);
+            background: var(--primary);
+            color: #000;
+            box-shadow: 0 0 30px rgba(0, 242, 234, 0.5);
+            transform: translateY(-3px);
         }
 
         .btn-download svg {
@@ -606,7 +610,7 @@
             .content-area { 
                 padding: 16px; 
                 /* Increased padding bottom to prevent content hiding behind nav */
-                padding-bottom: 200px; 
+                padding-bottom: 300px; 
                 width: 100%;
                 -webkit-overflow-scrolling: touch; 
             }
@@ -1140,8 +1144,8 @@
                 const btnWrapper = document.createElement('div');
                 btnWrapper.className = 'btn-download-wrapper';
 
-                // Add Stylish Download Button
-                const dwnBtn = document.createElement('a');
+                // Add Stylish Download Button (Fixed)
+                const dwnBtn = document.createElement('button'); // Changed to button for JS click
                 dwnBtn.className = 'btn-download';
                 dwnBtn.innerHTML = `
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1151,19 +1155,37 @@
                     </svg>
                     <span>Download Image</span>
                 `;
-                dwnBtn.href = imageUrl;
-                dwnBtn.download = `lumina-art-${Date.now()}.png`;
+                
+                // Real Download Logic via Blob
+                dwnBtn.onclick = async () => {
+                    try {
+                        const response = await fetch(imageUrl);
+                        const blob = await response.blob();
+                        const blobUrl = window.URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = blobUrl;
+                        link.download = `lumina-art-${Date.now()}.png`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        window.URL.revokeObjectURL(blobUrl);
+                    } catch (e) {
+                        console.error("Download failed, opening new tab", e);
+                        window.open(imageUrl, '_blank');
+                    }
+                };
                 
                 btnWrapper.appendChild(dwnBtn);
                 imgContainer.appendChild(btnWrapper);
                 
                 container.appendChild(imgContainer);
 
-                // Scroll to bottom ensuring button is visible
+                // --- KEY FIX: Force Scroll to Button ---
                 setTimeout(() => {
                     const contentArea = document.querySelector('.content-area');
-                    contentArea.scrollTo({ top: contentArea.scrollHeight, behavior: 'smooth' });
-                }, 100);
+                    // Force scroll to maximum height (bottom)
+                    contentArea.scrollTop = contentArea.scrollHeight;
+                }, 200);
             }
         }
 
