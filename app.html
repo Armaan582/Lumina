@@ -361,36 +361,47 @@
         }
 
         /* --- STYLISH DOWNLOAD BUTTON --- */
-        .btn-download {
+        .btn-download-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
             margin-top: 25px;
-            background: linear-gradient(90deg, #00f2ea, #7b2cbf);
+        }
+
+        .btn-download {
+            background: rgba(0,0,0,0.4);
             color: white;
-            padding: 14px 32px;
-            border-radius: 50px;
+            padding: 12px 28px;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 1rem;
-            font-weight: 700;
+            font-weight: 600;
             letter-spacing: 0.5px;
             display: flex;
             align-items: center;
             gap: 12px;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.3s ease;
             text-decoration: none;
-            border: none;
-            box-shadow: 0 5px 20px rgba(0, 242, 234, 0.3);
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            border: 1px solid rgba(0, 242, 234, 0.3);
+            position: relative;
+            overflow: hidden;
         }
 
         .btn-download:hover {
-            transform: scale(1.05) translateY(-2px);
-            box-shadow: 0 10px 30px rgba(0, 242, 234, 0.5);
-            filter: brightness(1.1);
-        }
-        
-        .btn-download:active {
-            transform: scale(0.98);
+            background: rgba(0, 242, 234, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 242, 234, 0.2);
+            transform: translateY(-2px);
         }
 
+        .btn-download svg {
+            transition: transform 0.3s;
+        }
+
+        .btn-download:hover svg {
+            transform: translateY(2px);
+        }
+        
         .output-box {
             min-height: 150px;
             position: relative;
@@ -420,9 +431,10 @@
             box-shadow: 0 10px 40px rgba(0,0,0,0.5);
             display: block;
             margin-bottom: 10px;
+            border: 1px solid var(--border-light);
         }
 
-        /* --- GENERATING ANIMATION (Holographic Ring) --- */
+        /* --- NEW GENERATING ANIMATION (Quantum Core) --- */
         .gen-anim-container {
             display: flex;
             flex-direction: column;
@@ -431,58 +443,80 @@
             height: 350px;
             width: 100%;
             position: relative;
+            background: radial-gradient(circle at center, rgba(0, 242, 234, 0.05), transparent 70%);
+            border-radius: 20px;
         }
 
-        .gen-ring {
+        .qc-spinner {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .qc-ring {
             position: absolute;
-            width: 80px;
-            height: 80px;
             border-radius: 50%;
-            border: 4px solid transparent;
-            border-top-color: var(--primary);
-            animation: spinRing 2s linear infinite;
-        }
-        
-        .gen-ring:nth-child(2) {
-            width: 60px;
-            height: 60px;
-            border-top-color: var(--secondary);
-            animation: spinRing 1.5s linear infinite reverse;
+            border: 2px solid transparent;
         }
 
-        .gen-core {
-            width: 40px;
-            height: 40px;
-            background: var(--primary);
+        /* Outer Ring */
+        .qc-ring:nth-child(1) {
+            width: 100%;
+            height: 100%;
+            border-top-color: var(--primary);
+            border-right-color: rgba(0, 242, 234, 0.3);
+            animation: qc-spin 2s linear infinite;
+        }
+
+        /* Middle Ring */
+        .qc-ring:nth-child(2) {
+            width: 70%;
+            height: 70%;
+            border-bottom-color: var(--secondary);
+            border-left-color: rgba(123, 44, 191, 0.3);
+            animation: qc-spin 3s linear infinite reverse;
+        }
+
+        /* Inner Ring */
+        .qc-ring:nth-child(3) {
+            width: 40%;
+            height: 40%;
+            border: 2px solid var(--accent-pink);
+            opacity: 0.7;
+            animation: qc-pulse 1s ease-in-out infinite alternate;
+        }
+
+        .qc-core {
+            width: 15px;
+            height: 15px;
+            background: white;
             border-radius: 50%;
-            box-shadow: 0 0 20px var(--primary);
-            animation: pulseCore 1s ease-in-out infinite alternate;
+            box-shadow: 0 0 20px white, 0 0 40px var(--primary);
+            animation: qc-glow 1.5s ease-in-out infinite;
         }
 
         .gen-text {
-            margin-top: 100px; /* Spacing below rings */
+            margin-top: 30px;
             font-size: 0.9rem;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             text-transform: uppercase;
             color: var(--primary);
-            font-weight: 700;
-            animation: pulseText 1.5s infinite;
+            font-weight: 600;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 100%;
+            animation: shimmer 2s linear infinite;
         }
 
-        @keyframes spinRing {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        @keyframes qc-spin { to { transform: rotate(360deg); } }
+        @keyframes qc-pulse { 0% { transform: scale(0.8); } 100% { transform: scale(1.1); } }
+        @keyframes qc-glow { 0% { opacity: 0.5; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.2); } 100% { opacity: 0.5; transform: scale(0.9); } }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
-        @keyframes pulseCore {
-            0% { transform: scale(0.8); opacity: 0.7; }
-            100% { transform: scale(1.1); opacity: 1; }
-        }
-
-        @keyframes pulseText {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
 
         /* Loading State (Btn Spinner) */
         .loader {
@@ -1040,15 +1074,18 @@
                 container.innerHTML = marked.parse(resultText);
             }
 
-            // --- IMAGE LOGIC (With Animation) ---
+            // --- IMAGE LOGIC (With Quantum Core Animation) ---
             async handleImageGeneration(input, container) {
-                // Show Animated Loader
+                // Show New Quantum Core Animation
                 container.innerHTML = `
                     <div class="gen-anim-container">
-                        <div class="gen-ring"></div>
-                        <div class="gen-ring"></div>
-                        <div class="gen-core"></div>
-                        <p class="gen-text">Constructing Visual Data...</p>
+                        <div class="qc-spinner">
+                            <div class="qc-ring"></div>
+                            <div class="qc-ring"></div>
+                            <div class="qc-ring"></div>
+                            <div class="qc-core"></div>
+                        </div>
+                        <p class="gen-text">Synthesizing Visuals</p>
                     </div>
                 `;
 
@@ -1098,7 +1135,10 @@
                 // Clear loading animation
                 container.innerHTML = '';
                 imgContainer.appendChild(img);
-                container.appendChild(imgContainer);
+                
+                // Create Button Wrapper for better layout
+                const btnWrapper = document.createElement('div');
+                btnWrapper.className = 'btn-download-wrapper';
 
                 // Add Stylish Download Button
                 const dwnBtn = document.createElement('a');
@@ -1109,15 +1149,21 @@
                         <polyline points="7 10 12 15 17 10"></polyline>
                         <line x1="12" y1="15" x2="12" y2="3"></line>
                     </svg>
-                    Download Image
+                    <span>Download Image</span>
                 `;
                 dwnBtn.href = imageUrl;
                 dwnBtn.download = `lumina-art-${Date.now()}.png`;
-                imgContainer.appendChild(dwnBtn);
                 
-                // Scroll to bottom
-                const contentArea = document.querySelector('.content-area');
-                contentArea.scrollTo({ top: contentArea.scrollHeight, behavior: 'smooth' });
+                btnWrapper.appendChild(dwnBtn);
+                imgContainer.appendChild(btnWrapper);
+                
+                container.appendChild(imgContainer);
+
+                // Scroll to bottom ensuring button is visible
+                setTimeout(() => {
+                    const contentArea = document.querySelector('.content-area');
+                    contentArea.scrollTo({ top: contentArea.scrollHeight, behavior: 'smooth' });
+                }, 100);
             }
         }
 
