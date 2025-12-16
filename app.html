@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Lumina | AI Dashboard</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Marked for Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <style>
+        /* =========================================
+           1. CORE THEME & VARIABLES
+           ========================================= */
+        :root {
+            /* Colors */
+            --bg-dark: #050507;
+            --bg-glass: rgba(20, 20, 25, 0.6);
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.06);
+            --bg-input: rgba(0, 0, 0, 0.3);
+            
+            --primary: #00f2ea;
+            --primary-dim: rgba(0, 242, 234, 0.1);
+            --secondary: #7b2cbf;
+            --accent-pink: #f72585;
+            
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            
+            --border-light: rgba(255, 255, 255, 0.08);
+            --border-active: rgba(0, 242, 234, 0.3);
+            
+            --sidebar-w: 280px;
+            --header-h: 70px;
+            
+            --font-main: 'Outfit', sans-serif;
+            --ease: cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            /* Use dvh (dynamic viewport height) to prevent mobile browser bars from cutting content */
+            height: 100vh;
+            height: 100dvh; 
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* Animated Mesh Gradient Background */
+        .bg-mesh {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1;
+            background: radial-gradient(circle at 10% 20%, rgba(123, 44, 191, 0.15) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 80%, rgba(0, 242, 234, 0.1) 0%, transparent 40%),
+                        radial-gradient(circle at 50% 50%, rgba(5, 5, 7, 1) 0%, rgba(5, 5, 7, 0.9) 100%);
+            animation: pulseBg 10s ease infinite alternate;
+        }
+
+        @keyframes pulseBg {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        /* =========================================
+           2. SIDEBAR NAVIGATION (Desktop)
+           ========================================= */
+        .sidebar {
+            width: var(--sidebar-w);
+            height: 100%;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border-light);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            z-index: 50;
+            transition: transform 0.3s var(--ease);
+            flex-shrink: 0; /* Prevent sidebar from shrinking */
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            text-decoration: none;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .brand-icon {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 20px rgba(0, 242, 234, 0.3);
+        }
+
+        .brand-icon svg { width: 20px; height: 20px; fill: #000; }
+        .brand-name { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; }
+
+        .nav-menu {
+            display: flex; flex-direction: column; gap: 8px;
+            flex: 1; 
+            overflow-y: auto; /* Scroll if menu is too long */
+            scrollbar-width: none;
+            margin-bottom: 20px;
+        }
+        .nav-menu::-webkit-scrollbar { display: none; }
+
+        .nav-item {
+            display: flex; align-items: center; gap: 14px;
+            padding: 12px 16px;
+            border-radius: 14px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.2s var(--ease);
+            border: 1px solid transparent;
+            cursor: pointer;
+            flex-shrink: 0;
+            white-space: nowrap; /* Prevent text wrapping in nav */
+        }
+
+        .nav-item svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; transition: 0.2s; }
+
+        .nav-item:hover {
+            background: var(--bg-card-hover);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .nav-item.active {
+            background: var(--primary-dim);
+            color: var(--primary);
+            border-color: rgba(0, 242, 234, 0.2);
+        }
+
+        .nav-item.active svg { stroke: var(--primary); filter: drop-shadow(0 0 5px var(--primary)); }
+
+        .user-panel {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-light);
+            display: flex; align-items: center; gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .avatar {
+            width: 40px; height: 40px;
+            background: linear-gradient(45deg, #333, #555);
+            border-radius: 50%;
+            position: relative;
+        }
+        .avatar::after {
+            content: ''; position: absolute; bottom: 0; right: 0;
+            width: 10px; height: 10px; background: #00ff88;
+            border-radius: 50%; border: 2px solid var(--bg-dark);
+        }
+
+        .user-info h4 { font-size: 0.9rem; font-weight: 600; }
+        .user-info span { font-size: 0.75rem; color: var(--text-muted); display: block; }
+
+        /* Back Button Styles */
+        .back-btn-container {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-light);
+            flex-shrink: 0;
+        }
+        .back-btn {
+            display: flex; align-items: center; gap: 10px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 10px;
+            transition: color 0.2s;
+        }
+        .back-btn:hover { color: white; }
+
+        /* =========================================
+           3. MAIN CONTENT
+           ========================================= */
+        .main-wrapper {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .top-header {
+            height: var(--header-h);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 40px;
+            border-bottom: 1px solid var(--border-light);
+            background: rgba(5, 5, 7, 0.4);
+            backdrop-filter: blur(10px);
+            flex-shrink: 0;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 20px; }
+        .mobile-back-btn { 
+            display: none; /* Hidden on desktop */
+            color: white; text-decoration: none; font-size: 0.9rem;
+            align-items: center; gap: 5px;
+            background: rgba(255,255,255,0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        .page-title h2 { font-size: 1.5rem; font-weight: 600; color: white; }
+        .page-title p { font-size: 0.9rem; color: var(--text-muted); margin-top: 4px; }
+
+        .status-badge {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            white-space: nowrap;
+        }
+
+        .content-area {
+            flex: 1;
+            padding: 40px;
+            /* Extra padding bottom to ensure content isn't hidden behind mobile nav bar */
+            padding-bottom: 150px; 
+            overflow-y: auto;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        /* =========================================
+           4. TOOL INTERFACE
+           ========================================= */
+        .tool-view {
+            width: 100%;
+            max-width: 900px;
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.4s var(--ease) forwards;
+            padding-bottom: 20px;
+        }
+
+        .tool-view.active { display: block; }
+
+        .workspace {
+            display: grid;
+            gap: 24px;
+            width: 100%;
+        }
+
+        .glass-panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 24px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: border 0.3s;
+            width: 100%;
+        }
+
+        .glass-panel:focus-within {
+            border-color: rgba(0, 242, 234, 0.3);
+            background: var(--bg-card-hover);
+        }
+
+        .panel-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            gap: 10px;
+        }
+
+        .label {
+            font-size: 0.8rem; font-weight: 700; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        .control-select {
+            background: var(--bg-input);
+            border: 1px solid var(--border-light);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: var(--font-main);
+            font-size: 0.9rem;
+            outline: none;
+            cursor: pointer;
+            min-width: 150px;
+            max-width: 100%; /* Prevent overflow */
+        }
+
+        .control-select option {
+            background: #1a1a20;
+            color: white;
+        }
+
+        textarea, input[type="text"] {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: white;
+            font-family: var(--font-main);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+            min-height: 120px;
+            word-wrap: break-word; /* Ensure long words break */
+        }
+        
+        textarea::placeholder, input::placeholder { color: rgba(255,255,255,0.2); }
+
+        .action-bar {
+            display: flex; justify-content: flex-end;
+            margin-top: 16px; padding-top: 16px;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .btn-generate {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: #000;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 20px rgba(0, 242, 234, 0.25);
+            white-space: nowrap;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 242, 234, 0.4);
+        }
+
+        .btn-generate:disabled {
+            opacity: 0.7; cursor: not-allowed; transform: none;
+        }
+
+        .btn-download {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .btn-download:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .output-box {
+            min-height: 150px;
+            position: relative;
+        }
+        
+        .result-text {
+            color: var(--text-main);
+            /* Markdown styling support */
+        }
+        .result-text p { margin-bottom: 0.8em; line-height: 1.7; }
+        .result-text strong { color: var(--primary); }
+        .result-text ul, .result-text ol { margin-left: 1.5em; margin-bottom: 0.8em; }
+        .result-text code { background: rgba(0,0,0,0.3); padding: 2px 5px; border-radius: 4px; font-family: monospace; }
+        .result-text h1, .result-text h2, .result-text h3 { margin-top: 0.5em; margin-bottom: 0.5em; color: white; }
+
+        .result-image-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .result-image {
+            width: 100%;
+            height: auto;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        /* Loading State */
+        .loader {
+            width: 20px; height: 20px;
+            border: 2px solid rgba(0,0,0,0.2);
+            border-top-color: #000;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* =========================================
+           5. MOBILE RESPONSIVE
+           ========================================= */
+        @media (max-width: 1024px) {
+            .sidebar { width: 80px; padding: 24px 12px; }
+            .nav-item span, .brand-name, .user-info, .back-btn-container { display: none; }
+            .nav-item { justify-content: center; padding: 14px; }
+            .brand { justify-content: center; margin-bottom: 20px; }
+            .top-header { padding: 0 24px; }
+        }
+
+        @media (max-width: 768px) {
+            body { 
+                flex-direction: column; 
+                position: fixed; /* Fix body to prevent rubber-band scroll on iOS */
+                inset: 0;
+            }
+            .sidebar {
+                width: 100%; 
+                height: 70px; /* Fixed height for bottom nav */
+                position: fixed; 
+                bottom: 0; 
+                left: 0;
+                flex-direction: row; 
+                justify-content: space-around;
+                padding: 10px;
+                border-right: none;
+                border-top: 1px solid var(--border-light);
+                background: rgba(5,5,7,0.95);
+                backdrop-filter: blur(20px);
+                z-index: 100;
+                box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+            }
+            .brand, .user-panel, .back-btn-container { display: none; }
+            
+            .nav-menu { 
+                flex-direction: row; 
+                overflow-x: auto; 
+                gap: 8px; 
+                margin-bottom: 0; 
+                width: 100%;
+                padding: 0 10px;
+                align-items: center;
+            }
+            .nav-item { 
+                flex-direction: column; 
+                gap: 4px; 
+                padding: 8px 12px; 
+                font-size: 0.65rem; 
+                border-radius: 8px; 
+                min-width: 60px; /* Touch target size */
+            }
+            .nav-item span { display: block; font-weight: 500; font-size: 0.65rem; text-align: center; }
+            .nav-item svg { width: 20px; height: 20px; }
+            
+            .main-wrapper { 
+                height: 100%; 
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            .top-header { 
+                padding: 0 16px; 
+                height: 60px; 
+                width: 100%;
+                z-index: 10;
+            }
+            
+            .page-title h2 { font-size: 1.2rem; }
+            .page-title p { display: none; /* Hide subtitle on mobile to save space */ }
+            
+            .content-area { 
+                padding: 16px; 
+                /* Padding bottom = Nav Height (70px) + Extra Space (40px) */
+                padding-bottom: 110px; 
+                width: 100%;
+                -webkit-overflow-scrolling: touch; /* Smooth scroll iOS */
+            }
+            
+            .mobile-back-btn { display: flex; font-size: 0.8rem; padding: 6px 10px; }
+            .status-badge { padding: 4px 10px; font-size: 0.7rem; }
+            
+            .glass-panel { padding: 16px; border-radius: 16px; }
+            
+            /* Make text inputs smaller on mobile to prevent zoom */
+            textarea, input[type="text"] { font-size: 16px; } 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-mesh"></div>
+
+    <!-- Sidebar / Bottom Nav -->
+    <nav class="sidebar">
+        <a href="index.html" class="brand">
+            <div class="brand-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="currentColor"></path></svg>
+            </div>
+            <div class="brand-name">LUMINA</div>
+        </a>
+
+        <div class="nav-menu">
+            <div class="nav-item active" onclick="app.switchTool('writer')">
+                <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                <span>Writer</span>
+            </div>
+            <div class="nav-item" onclick="app.switchTool('image')">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                <span>Image</span>
+            </div>
+            <div class="nav-item" onclick="app.switchTool('translator')">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20"></path><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                <span>Translate</span>
+            </div>
+            <div class="nav-item" onclick="app.switchTool('paraphrase')">
+                <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                <span>Rewrite</span>
+            </div>
+            <div class="nav-item" onclick="app.switchTool('grammar')">
+                <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                <span>Grammar</span>
+            </div>
+            <div class="nav-item" onclick="app.switchTool('summarize')">
+                <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+                <span>Summary</span>
+            </div>
+            <div class="nav-item" onclick="app.switchTool('title')">
+                <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                <span>Titles</span>
+            </div>
+            <div class="nav-item" onclick="app.switchTool('prompt')">
+                <svg viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                <span>Prompts</span>
+            </div>
+        </div>
+
+        <div class="user-panel">
+            <div class="avatar"></div>
+            <div class="user-info">
+                <h4>Pro User</h4>
+                <span>Gemini Powered</span>
+            </div>
+        </div>
+        
+        <!-- Desktop Sidebar Back Button -->
+        <div class="back-btn-container">
+            <a href="index.html" class="back-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                Back to Website
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+        <header class="top-header">
+            <div class="header-left">
+                <!-- Mobile Back Button -->
+                <a href="index.html" class="mobile-back-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                    Home
+                </a>
+                <div class="page-title">
+                    <h2 id="header-title">AI Writer</h2>
+                    <p id="header-desc">Create blog posts, emails, and stories.</p>
+                </div>
+            </div>
+            <div class="status-badge">
+                <div style="width: 8px; height: 8px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 8px #00ff88;"></div>
+                <span>Online</span>
+            </div>
+        </header>
+
+        <div class="content-area">
+            
+            <!-- TOOL: AI WRITER -->
+            <div id="view-writer" class="tool-view active">
+                <div class="workspace">
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <span class="label">Your Topic</span>
+                        </div>
+                        <textarea id="in-writer" placeholder="What would you like to write about? (e.g. 'Future of AI in Healthcare')"></textarea>
+                        <div class="action-bar">
+                            <button class="btn-generate" onclick="app.generate('writer')">
+                                <span class="btn-text">Generate Content</span>
+                                <div class="loader"></div>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="glass-panel output-box">
+                        <div class="panel-header"><span class="label">Result</span></div>
+                        <div id="out-writer" class="result-text"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOOL: IMAGE GENERATOR -->
+            <div id="view-image" class="tool-view">
+                <div class="workspace">
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <span class="label">Image Prompt</span>
+                        </div>
+                        <input type="text" id="in-image" placeholder="Describe the image (e.g. 'Cyberpunk city with neon rain, 8k render')">
+                        <div class="action-bar">
+                            <button class="btn-generate" onclick="app.generate('image')">
+                                <span class="btn-text">Create Image</span>
+                                <div class="loader"></div>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="glass-panel output-box">
+                        <div class="panel-header"><span class="label">Preview</span></div>
+                        <div id="out-image" class="result-text" style="display:flex; justify-content:center; align-items:center; min-height: 300px;">
+                            <span style="opacity:0.5; font-style:italic;">Visuals will appear here</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOOL: TRANSLATOR -->
+            <div id="view-translator" class="tool-view">
+                <div class="workspace">
+                    <div class="glass-panel">
+                        <div class="panel-header">
+                            <span class="label">Text to Translate</span>
+                            <select id="opt-lang" class="control-select">
+                                <option value="Hindi">Hindi</option>
+                                <option value="Punjabi">Punjabi</option>
+                                <option value="Spanish">Spanish</option>
+                                <option value="French">French</option>
+                                <option value="German">German</option>
+                                <option value="Japanese">Japanese</option>
+                                <option value="Chinese">Chinese (Mandarin)</option>
+                                <option value="Korean">Korean</option>
+                                <option value="Italian">Italian</option>
+                                <option value="Russian">Russian</option>
+                                <option value="Portuguese">Portuguese</option>
+                                <option value="Arabic">Arabic</option>
+                                <option value="Bengali">Bengali</option>
+                                <option value="Urdu">Urdu</option>
+                                <option value="Indonesian">Indonesian</option>
+                                <option value="Turkish">Turkish</option>
+                                <option value="Vietnamese">Vietnamese</option>
+                                <option value="Tamil">Tamil</option>
+                                <option value="Telugu">Telugu</option>
+                                <option value="Marathi">Marathi</option>
+                                <option value="Thai">Thai</option>
+                                <option value="Greek">Greek</option>
+                                <option value="Swedish">Swedish</option>
+                                <option value="Dutch">Dutch</option>
+                                <option value="Polish">Polish</option>
+                            </select>
+                        </div>
+                        <textarea id="in-translator" placeholder="Enter text here..."></textarea>
+                        <div class="action-bar">
+                            <button class="btn-generate" onclick="app.generate('translator')">
+                                <span class="btn-text">Translate</span>
+                                <div class="loader"></div>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="glass-panel output-box">
+                        <div class="panel-header"><span class="label">Translated Text</span></div>
+                        <div id="out-translator" class="result-text"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOOL: PARAPHRASER -->
+            <div id="view-paraphrase" class="tool-view">
+                <div class="workspace">
+                    <div class="glass-panel">
+                        <div class="panel-header"><span class="label">Original Text</span></div>
+                        <textarea id="in-paraphrase" placeholder="Paste text to rewrite..."></textarea>
+                        <div class="action-bar">
+                            <button class="btn-generate" onclick="app.generate('paraphrase')">
+                                <span class="btn-text">Rephrase</span>
+                                <div class="loader"></div>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="glass-panel output-box">
+                        <div class="panel-header"><span class="label">Rewritten Version</span></div>
+                        <div id="out-paraphrase" class="result-text"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOOL: GRAMMAR -->
+            <div id="view-grammar" class="tool-view">
+                <div class="workspace">
+                    <div class="glass-panel">
+                        <div class="panel-header"><span class="label">Text to Check</span></div>
+                        <textarea id="in-grammar" placeholder="Paste text with errors..."></textarea>
+                        <div class="action-bar">
+                            <button class="btn-generate" onclick="app.generate('grammar')">
+                                <span class="btn-text">Fix Grammar</span>
+                                <div class="loader"></div>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="glass-panel output-box">
+                        <div class="panel-header"><span class="label">Corrected Text</span></div>
+                        <div id="out-grammar" class="result-text"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOOL: SUMMARIZER -->
+            <div id="view-summarize" class="tool-view">
+                <div class="workspace">
+                    <div class="glass-panel">
+                        <div class="panel-header"><span class="label">Long Text</span></div>
+                        <textarea id="in-summarize" placeholder="Paste article or document text..."></textarea>
+                        <div class="action-bar">
+                            <button class="btn-generate" onclick="app.generate('summarize')">
+                                <span class="btn-text">Summarize</span>
+                                <div class="loader"></div>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="glass-panel output-box">
+                        <div class="panel-header"><span class="label">Summary</span></div>
+                        <div id="out-summarize" class="result-text"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOOL: TITLE GENERATOR -->
+            <div id="view-title" class="tool-view">
+                <div class="workspace">
+                    <div class="glass-panel">
+                        <div class="panel-header"><span class="label">Content Topic</span></div>
+                        <textarea id="in-title" placeholder="What is your video or blog about?"></textarea>
+                        <div class="action-bar">
+                            <button class="btn-generate" onclick="app.generate('title')">
+                                <span class="btn-text">Generate Headlines</span>
+                                <div class="loader"></div>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="glass-panel output-box">
+                        <div class="panel-header"><span class="label">Catchy Titles</span></div>
+                        <div id="out-title" class="result-text"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOOL: PROMPT GENERATOR -->
+            <div id="view-prompt" class="tool-view">
+                <div class="workspace">
+                    <div class="glass-panel">
+                        <div class="panel-header"><span class="label">Basic Idea</span></div>
+                        <textarea id="in-prompt" placeholder="E.g. 'A cat in space'"></textarea>
+                        <div class="action-bar">
+                            <button class="btn-generate" onclick="app.generate('prompt')">
+                                <span class="btn-text">Optimize Prompt</span>
+                                <div class="loader"></div>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="glass-panel output-box">
+                        <div class="panel-header"><span class="label">Optimized Prompt</span></div>
+                        <div id="out-prompt" class="result-text"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        /**
+         * LUMINA APP CONTROLLER
+         * Integrated with Gemini 2.5 Flash Preview for text and Imagen 3 for images.
+         */
+
+        // ==========================================
+        // 1. CONFIGURATION
+        // ==========================================
+        
+        // SECURE KEY INJECTION (Runtime)
+        const API_KEY = ""; 
+
+        // API ENDPOINTS
+        const TEXT_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent";
+        const IMAGE_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict";
+
+        const TOOLS = {
+            writer: { title: "AI Writer", desc: "Create blog posts, emails, and stories." },
+            image: { title: "Image Generator", desc: "Transform words into stunning visuals." },
+            translator: { title: "Universal Translator", desc: "Break language barriers instantly." },
+            paraphrase: { title: "Paraphraser", desc: "Rewrite text for better clarity and tone." },
+            grammar: { title: "Grammar Checker", desc: "Fix spelling and punctuation errors." },
+            summarize: { title: "Summarizer", desc: "Condense long articles into key points." },
+            title: { title: "Title Generator", desc: "Generate catchy headlines for content." },
+            prompt: { title: "Prompt Engineer", desc: "Create detailed AI art prompts." }
+        };
+
+        // ==========================================
+        // 2. APP LOGIC
+        // ==========================================
+
+        class LuminaApp {
+            constructor() {
+                this.currentTool = 'writer';
+                this.init();
+            }
+
+            init() {
+                // Initial fade in
+                document.querySelector('.main-wrapper').style.opacity = 0;
+                setTimeout(() => {
+                    document.querySelector('.main-wrapper').style.transition = 'opacity 1s';
+                    document.querySelector('.main-wrapper').style.opacity = 1;
+                }, 100);
+            }
+
+            switchTool(toolId) {
+                // Update Nav UI
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                event.currentTarget.classList.add('active');
+
+                // Update View
+                document.querySelectorAll('.tool-view').forEach(el => {
+                    el.classList.remove('active');
+                    if (el.id === `view-${toolId}`) el.classList.add('active');
+                });
+
+                // Update Header
+                const toolInfo = TOOLS[toolId];
+                const headerTitle = document.getElementById('header-title');
+                const headerDesc = document.getElementById('header-desc');
+                
+                // Animation for text change
+                headerTitle.style.opacity = 0;
+                headerDesc.style.opacity = 0;
+                
+                setTimeout(() => {
+                    headerTitle.innerText = toolInfo.title;
+                    headerDesc.innerText = toolInfo.desc;
+                    headerTitle.style.opacity = 1;
+                    headerDesc.style.opacity = 1;
+                }, 200);
+
+                this.currentTool = toolId;
+            }
+
+            async generate(toolId) {
+                const inputId = `in-${toolId}`;
+                const outputId = `out-${toolId}`;
+                const btn = document.querySelector(`#view-${toolId} .btn-generate`);
+                const loader = btn.querySelector('.loader');
+                const btnText = btn.querySelector('.btn-text');
+                const inputValue = document.getElementById(inputId).value;
+
+                if (!inputValue.trim()) return; // Prevent empty submit
+
+                // UI Loading State
+                btn.disabled = true;
+                btnText.style.display = 'none';
+                loader.style.display = 'block';
+                const outputContainer = document.getElementById(outputId);
+                outputContainer.innerHTML = ''; // Clear previous
+
+                try {
+                    if (toolId === 'image') {
+                        await this.handleImageGeneration(inputValue, outputContainer);
+                    } else {
+                        await this.handleTextGeneration(toolId, inputValue, outputContainer);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    outputContainer.innerHTML = `<span style="color:#ff4444; background: rgba(255,0,0,0.1); padding: 10px; border-radius: 8px;">Error: ${err.message}</span>`;
+                } finally {
+                    // Reset UI
+                    btn.disabled = false;
+                    btnText.style.display = 'block';
+                    loader.style.display = 'none';
+                }
+            }
+
+            // --- TEXT LOGIC ---
+            async handleTextGeneration(toolId, input, container) {
+                let prompt = input;
+                let systemInstruction = "You are a helpful AI assistant.";
+                
+                // Construct specific prompts & system instructions
+                if (toolId === 'writer') systemInstruction = "You are an expert copywriter. Write engaging, high-quality content.";
+                if (toolId === 'summarize') {
+                    systemInstruction = "You are an expert summarizer. Create concise, bulleted summaries.";
+                    prompt = `Summarize this text:\n\n${input}`;
+                }
+                if (toolId === 'paraphrase') {
+                    systemInstruction = "You are an expert editor. Rewrite text to be clearer, more professional, and engaging.";
+                    prompt = `Rewrite this:\n\n${input}`;
+                }
+                if (toolId === 'grammar') {
+                    systemInstruction = "You are a grammar expert. Correct all spelling and grammar errors. Return ONLY the corrected text.";
+                    prompt = `Fix this:\n\n${input}`;
+                }
+                if (toolId === 'title') {
+                    systemInstruction = "You are a marketing expert. Generate 5 catchy, SEO-friendly headlines.";
+                    prompt = `Generate titles for this topic:\n\n${input}`;
+                }
+                if (toolId === 'prompt') {
+                    systemInstruction = "You are a Prompt Engineer. Create highly detailed, descriptive prompts for AI image generators.";
+                    prompt = `Optimize this image idea into a detailed prompt:\n\n${input}`;
+                }
+                if (toolId === 'translator') {
+                    const lang = document.getElementById('opt-lang').value;
+                    systemInstruction = `You are a professional translator. Translate accurately to ${lang}.`;
+                    prompt = `Translate this text:\n\n${input}`;
+                }
+
+                // Call Gemini 2.5 Flash
+                const response = await fetch(`${TEXT_API_URL}?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }],
+                        systemInstruction: { parts: [{ text: systemInstruction }] }
+                    })
+                });
+
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                
+                const data = await response.json();
+                const resultText = data.candidates?.[0]?.content?.parts?.[0]?.text || "No response generated.";
+                
+                // Render Markdown
+                container.innerHTML = marked.parse(resultText);
+            }
+
+            // --- IMAGE LOGIC ---
+            async handleImageGeneration(input, container) {
+                container.innerHTML = '<span style="opacity:0.7; font-style:italic">Generating high-res visual with Imagen 3...</span>';
+
+                const response = await fetch(`${IMAGE_API_URL}?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        instances: [{ prompt: input }],
+                        parameters: { sampleCount: 1 }
+                    })
+                });
+
+                if (!response.ok) throw new Error(`Image API Error: ${response.status}`);
+
+                const data = await response.json();
+                const base64Image = data.predictions[0].bytesBase64Encoded;
+                const imageUrl = `data:image/png;base64,${base64Image}`;
+                
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'result-image-container';
+
+                const img = new Image();
+                img.src = imageUrl;
+                img.className = 'result-image';
+                
+                // Clear loading text
+                container.innerHTML = '';
+                imgContainer.appendChild(img);
+                container.appendChild(imgContainer);
+
+                // Add Download Button
+                const dwnBtn = document.createElement('a');
+                dwnBtn.className = 'btn-download';
+                dwnBtn.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="7 10 12 15 17 10"></polyline>
+                        <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    Download Image
+                `;
+                dwnBtn.href = imageUrl;
+                dwnBtn.download = `lumina-art-${Date.now()}.png`;
+                imgContainer.appendChild(dwnBtn);
+                
+                // Scroll to bottom
+                const contentArea = document.querySelector('.content-area');
+                contentArea.scrollTo({ top: contentArea.scrollHeight, behavior: 'smooth' });
+            }
+        }
+
+        // Initialize App
+        const app = new LuminaApp();
+
+    </script>
+</body>
+</html>

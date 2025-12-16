@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="google-site-verification" content="dCr2EuBjN2lfj__Y7t1PqK6LG7JH3HUi3Iifesi8s2U" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUMINA | Smart AI. Simple Tools.</title>
+    <meta name="description" content="Lumina - Your All-in-One Free AI Toolkit. Generate images, write smarter, translate instantly.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* =========================================
+           CORE VARIABLES & RESET
+           ========================================= */
+        :root {
+            --bg-dark: #050507;
+            --bg-card: rgba(255, 255, 255, 0.03);
+            --bg-card-hover: rgba(255, 255, 255, 0.07);
+            --primary: #00f2ea;
+            --secondary: #7b2cbf;
+            --text-main: #ffffff;
+            --text-muted: #9ca3af;
+            --border-glass: rgba(255, 255, 255, 0.1);
+            --glow: 0 0 20px rgba(0, 242, 234, 0.3);
+            --font-main: 'Outfit', sans-serif;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            /* Changed from solid color to animated gradient */
+            background: linear-gradient(-45deg, #050507, #0f172a, #1a1033, #020203);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            
+            color: var(--text-main);
+            font-family: var(--font-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* =========================================
+           UTILITY CLASSES
+           ========================================= */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #fff 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-padding {
+            padding: 100px 0;
+        }
+
+        h1, h2, h3, h4 {
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        p {
+            color: var(--text-muted);
+        }
+
+        /* =========================================
+           BUTTONS
+           ========================================= */
+        .btn {
+            display: inline-block;
+            padding: 12px 32px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, var(--secondary) 0%, var(--primary) 100%);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(0, 242, 234, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 242, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            backdrop-filter: blur(5px);
+            border: 1px solid var(--border-glass);
+            margin-left: 16px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--primary);
+        }
+
+        /* =========================================
+           NAVIGATION
+           ========================================= */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 24px 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            /* Glassmorphism initial state */
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .nav-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 15px rgba(0, 242, 234, 0.4);
+        }
+
+        .logo-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: #000;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* =========================================
+           HERO SECTION
+           ========================================= */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding-top: 80px;
+            overflow: hidden;
+        }
+
+        /* Ambient Glow Background */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(123, 44, 191, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            animation: pulse 8s infinite alternate;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 242, 234, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            animation: pulse 10s infinite alternate-reverse;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(0, 242, 234, 0.1);
+            border: 1px solid rgba(0, 242, 234, 0.3);
+            border-radius: 20px;
+            color: var(--primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            letter-spacing: 0.5px;
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            margin-bottom: 24px;
+            letter-spacing: -1.5px;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* =========================================
+           TRUST / INTRO
+           ========================================= */
+        .intro-section {
+            text-align: center;
+            border-bottom: 1px solid var(--border-glass);
+            /* Updated to match new animated body theme slightly better with transparency */
+            background: rgba(5, 5, 7, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .intro-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .stat-item h3 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        /* =========================================
+           FEATURES GRID
+           ========================================= */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 60px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glass);
+            padding: 32px;
+            border-radius: 20px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            background: var(--bg-card-hover);
+            border-color: rgba(0, 242, 234, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .icon-box svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--primary);
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+            color: white;
+        }
+
+        /* =========================================
+           HOW IT WORKS
+           ========================================= */
+        .steps-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 60px;
+            position: relative;
+        }
+
+        /* Connecting line */
+        .steps-container::after {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 15%;
+            right: 15%;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(0,242,234,0) 0%, rgba(0,242,234,0.3) 50%, rgba(0,242,234,0) 100%);
+            z-index: 0;
+            display: block;
+        }
+
+        .step-item {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            background: var(--bg-dark);
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 242, 234, 0.2);
+        }
+
+        /* =========================================
+           CTA SECTION
+           ========================================= */
+        .cta-section {
+            position: relative;
+            background: linear-gradient(135deg, rgba(123, 44, 191, 0.15) 0%, rgba(0, 242, 234, 0.05) 100%);
+            border-radius: 30px;
+            overflow: hidden;
+            text-align: center;
+            padding: 80px 24px;
+            border: 1px solid var(--border-glass);
+            margin-top: 40px;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        /* =========================================
+           FOOTER
+           ========================================= */
+        footer {
+            border-top: 1px solid var(--border-glass);
+            padding: 60px 0 30px;
+            margin-top: 60px;
+            background: #020203;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-brand p {
+            margin-top: 16px;
+            max-width: 300px;
+        }
+
+        .footer-links h4 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* =========================================
+           ANIMATION UTILS
+           ========================================= */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        /* =========================================
+           RESPONSIVE
+           ========================================= */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .nav-links { display: none; }
+            .steps-container { grid-template-columns: 1fr; }
+            .steps-container::after { display: none; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .btn-secondary { margin-left: 0; margin-top: 16px; display: block; width: 100%; }
+            .btn { width: 100%; text-align: center; }
+            .btn-primary { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="container nav-content">
+            <a href="#" class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="currentColor"></path>
+                    </svg>
+                </div>
+                LUMINA
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How it Works</a>
+                <a href="#about">About</a>
+                <a href="#pricing">Pricing</a>
+            </div>
+            <!-- Updated CTA: Launches the App -->
+            <a href="app.html" class="btn btn-primary" style="padding: 8px 20px; font-size: 0.9rem;">Launch App</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero" id="home">
+        <div class="container hero-content reveal">
+            <span class="badge">V2.0 is Live 🚀</span>
+            <h1>Your All-in-One<br><span class="text-gradient">Free AI Toolkit</span></h1>
+            <p>Generate stunning images, write copy in seconds, translate documents instantly, and boost your productivity with our suite of simple, intelligent tools.</p>
+            
+            <div class="cta-group">
+                <!-- Updated CTA: Launches the App -->
+                <a href="app.html" class="btn btn-primary">Get Started Free</a>
+                <a href="#features" class="btn btn-secondary">Explore Features</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Trust / Intro Section -->
+    <section class="section-padding intro-section" id="about">
+        <div class="container reveal">
+            <div class="intro-content">
+                <h2>Trusted by creators, beloved by developers</h2>
+                <p style="margin-top: 16px;">Lumina bridges the gap between complex AI models and everyday usability. We provide a simplified interface for the world's most powerful algorithms.</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>100k+</h3>
+                    <p>Active Users</p>
+                </div>
+                <div class="stat-item">
+                    <h3>5M+</h3>
+                    <p>Generations</p>
+                </div>
+                <div class="stat-item">
+                    <h3>0.2s</h3>
+                    <p>Avg Latency</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Features Section -->
+    <section class="section-padding" id="features">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 50px;" class="reveal">
+                <h2>Powerful Tools. <span class="text-gradient">Zero Friction.</span></h2>
+                <p>Everything you need to create, edit, and optimize content.</p>
+            </div>
+
+            <div class="features-grid">
+                <!-- Card 1 -->
+                <div class="feature-card reveal">
+                    <div class="icon-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Text to Image</h3>
+                    <p>Turn simple prompts into photorealistic images or digital art in seconds using latent diffusion.</p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="feature-card reveal">
+                    <div class="icon-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </div>
+                    <h3>AI Writer</h3>
+                    <p>Generate blog posts, emails, and social media captions with a single click. Writer's block is cured.</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="feature-card reveal">
+                    <div class="icon-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="2" y1="12" x2="22" y2="12"></line>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                    </div>
+                    <h3>Universal Translator</h3>
+                    <p>Break language barriers. Translate text into 50+ languages preserving nuance and context.</p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="feature-card reveal">
+                    <div class="icon-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="4 7 4 4 20 4 20 7"></polyline>
+                            <line x1="9" y1="20" x2="15" y2="20"></line>
+                            <line x1="12" y1="4" x2="12" y2="20"></line>
+                        </svg>
+                    </div>
+                    <h3>Title Generator</h3>
+                    <p>Create catchy, SEO-optimized headlines for YouTube videos, articles, and products.</p>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="feature-card reveal">
+                    <div class="icon-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <polyline points="1 20 1 14 7 14"></polyline>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                        </svg>
+                    </div>
+                    <h3>Paraphraser</h3>
+                    <p>Rewrite sentences to improve clarity, change tone, or avoid repetition without losing meaning.</p>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="feature-card reveal">
+                    <div class="icon-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="8" y1="6" x2="21" y2="6"></line>
+                            <line x1="8" y1="12" x2="21" y2="12"></line>
+                            <line x1="8" y1="18" x2="21" y2="18"></line>
+                            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                        </svg>
+                    </div>
+                    <h3>Summarizer</h3>
+                    <p>Condense long articles, papers, or documents into concise, bulleted lists instantly.</p>
+                </div>
+
+                <!-- Card 7 -->
+                <div class="feature-card reveal">
+                    <div class="icon-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                    </div>
+                    <h3>Grammar Check</h3>
+                    <p>Advanced spelling and grammar correction that understands context and style.</p>
+                </div>
+
+                <!-- Card 8 -->
+                <div class="feature-card reveal">
+                    <div class="icon-box">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                            <polyline points="2 17 12 22 22 17"></polyline>
+                            <polyline points="2 12 12 17 22 12"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Prompt Engineer</h3>
+                    <p>Not sure what to ask? Let our AI refine your prompts to get the best results from other models.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section-padding" id="how-it-works" style="background: rgba(255,255,255,0.01);">
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 50px;" class="reveal">
+                <h2>From Idea to Result in <span class="text-gradient">Seconds</span></h2>
+            </div>
+
+            <div class="steps-container reveal">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <h4>Enter Prompt</h4>
+                    <p>Paste your text or describe the image you want to create.</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <h4>Select Tool</h4>
+                    <p>Choose from our suite of 10+ specialized AI engines.</p>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <h4>Generate</h4>
+                    <p>Watch as Lumina processes your request instantly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Lumina -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="features-grid" style="grid-template-columns: repeat(2, 1fr);">
+                <div style="display: flex; flex-direction: column; justify-content: center;" class="reveal">
+                    <h2>Why choose Lumina?</h2>
+                    <p style="margin-bottom: 24px;">We believe AI should be accessible, not intimidating. We've stripped away the complex settings and code requirements.</p>
+                    
+                    <ul style="list-style: none; color: var(--text-muted);">
+                        <li style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                            <span style="color: var(--primary);">✓</span> 100% Free Tier Available
+                        </li>
+                        <li style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                            <span style="color: var(--primary);">✓</span> Works on Mobile & Desktop
+                        </li>
+                        <li style="margin-bottom: 10px; display: flex; align-items: center; gap: 10px;">
+                            <span style="color: var(--primary);">✓</span> No Credit Card Required
+                        </li>
+                    </ul>
+                </div>
+                <div class="feature-card reveal" style="background: linear-gradient(45deg, rgba(123, 44, 191, 0.2), rgba(0, 0, 0, 0)); border: 1px solid var(--primary);">
+                    <!-- Abstract representation of the interface -->
+                    <div style="padding: 20px; background: rgba(0,0,0,0.5); border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="width: 30%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; margin-bottom: 10px;"></div>
+                        <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-bottom: 6px;"></div>
+                        <div style="width: 80%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;"></div>
+                    </div>
+                    <div style="display: flex; justify-content: flex-end;">
+                         <div style="padding: 8px 20px; background: var(--primary); color: black; border-radius: 6px; font-size: 0.8rem; font-weight: bold;">Generate</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bottom CTA -->
+    <div class="container">
+        <div class="cta-section reveal">
+            <h2>Start Using AI the Smart Way</h2>
+            <p style="margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">Join thousands of creators who are saving hours every week with Lumina.</p>
+            <!-- Updated CTA: Launches the App -->
+            <a href="app.html" class="btn btn-primary">Launch Lumina</a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <div class="logo-icon" style="width: 24px; height: 24px; box-shadow: none;">
+                            <svg viewBox="0 0 24 24"><path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="currentColor"></path></svg>
+                        </div>
+                        LUMINA
+                    </a>
+                    <p class="text-sm">Empowering creativity with intelligent, simple, and fast AI tools. Built for the future.</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#">Tools</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">API</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                        <li><a href="#">Security</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2024 Lumina AI Inc. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth Scroll Animation for Elements coming into view
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: "0px 0px -50px 0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); // Only animate once
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Sticky Nav Effect
+        const nav = document.querySelector('nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.style.padding = '12px 0';
+                // Dark glass with purple hint
+                nav.style.background = 'rgba(5, 5, 15, 0.9)'; 
+                nav.style.borderBottom = '1px solid rgba(123, 44, 191, 0.3)';
+                nav.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.5)';
+            } else {
+                nav.style.padding = '20px 0';
+                // Lighter glass
+                nav.style.background = 'rgba(255, 255, 255, 0.02)'; 
+                nav.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+                nav.style.boxShadow = 'none';
+            }
+        });
+
+        // Add smooth scrolling to anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
