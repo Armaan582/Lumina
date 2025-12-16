@@ -240,7 +240,7 @@
         .content-area {
             flex: 1;
             padding: 40px;
-            padding-bottom: 250px; /* Increased to ensure scrolling space */
+            padding-bottom: 150px; 
             overflow-y: auto;
             overflow-x: hidden;
             display: flex;
@@ -610,7 +610,7 @@
             .content-area { 
                 padding: 16px; 
                 /* Increased padding bottom to prevent content hiding behind nav */
-                padding-bottom: 300px; 
+                padding-bottom: 400px; 
                 width: 100%;
                 -webkit-overflow-scrolling: touch; 
             }
@@ -1178,6 +1178,11 @@
                 btnWrapper.appendChild(dwnBtn);
                 imgContainer.appendChild(btnWrapper);
                 
+                // Add spacer to ensure scroll clearance on mobile
+                const spacer = document.createElement('div');
+                spacer.style.height = '100px'; 
+                imgContainer.appendChild(spacer);
+
                 container.appendChild(imgContainer);
 
                 // --- KEY FIX: Force Scroll to Button ---
