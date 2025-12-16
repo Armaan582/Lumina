@@ -48,7 +48,6 @@
             background-color: var(--bg-dark);
             color: var(--text-main);
             font-family: var(--font-main);
-            /* Use dvh (dynamic viewport height) to prevent mobile browser bars from cutting content */
             height: 100vh;
             height: 100dvh; 
             width: 100%;
@@ -87,7 +86,7 @@
             padding: 24px;
             z-index: 50;
             transition: transform 0.3s var(--ease);
-            flex-shrink: 0; /* Prevent sidebar from shrinking */
+            flex-shrink: 0;
         }
 
         .brand {
@@ -114,7 +113,7 @@
         .nav-menu {
             display: flex; flex-direction: column; gap: 8px;
             flex: 1; 
-            overflow-y: auto; /* Scroll if menu is too long */
+            overflow-y: auto;
             scrollbar-width: none;
             margin-bottom: 20px;
         }
@@ -132,7 +131,7 @@
             border: 1px solid transparent;
             cursor: pointer;
             flex-shrink: 0;
-            white-space: nowrap; /* Prevent text wrapping in nav */
+            white-space: nowrap;
         }
 
         .nav-item svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2; fill: none; transition: 0.2s; }
@@ -174,7 +173,6 @@
         .user-info h4 { font-size: 0.9rem; font-weight: 600; }
         .user-info span { font-size: 0.75rem; color: var(--text-muted); display: block; }
 
-        /* Back Button Styles */
         .back-btn-container {
             margin-top: 10px;
             padding-top: 10px;
@@ -216,7 +214,7 @@
 
         .header-left { display: flex; align-items: center; gap: 20px; }
         .mobile-back-btn { 
-            display: none; /* Hidden on desktop */
+            display: none;
             color: white; text-decoration: none; font-size: 0.9rem;
             align-items: center; gap: 5px;
             background: rgba(255,255,255,0.1);
@@ -242,10 +240,9 @@
         .content-area {
             flex: 1;
             padding: 40px;
-            /* Extra padding bottom to ensure content isn't hidden behind mobile nav bar */
             padding-bottom: 150px; 
             overflow-y: auto;
-            overflow-x: hidden; /* Prevent horizontal scrolling */
+            overflow-x: hidden;
             display: flex;
             justify-content: center;
             width: 100%;
@@ -257,7 +254,7 @@
         .tool-view {
             width: 100%;
             max-width: 900px;
-            display: none; /* Hidden by default */
+            display: none;
             animation: fadeIn 0.4s var(--ease) forwards;
             padding-bottom: 20px;
         }
@@ -289,7 +286,7 @@
         .panel-header {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 16px;
-            flex-wrap: wrap; /* Allow wrapping on small screens */
+            flex-wrap: wrap; 
             gap: 10px;
         }
 
@@ -309,7 +306,7 @@
             outline: none;
             cursor: pointer;
             min-width: 150px;
-            max-width: 100%; /* Prevent overflow */
+            max-width: 100%;
         }
 
         .control-select option {
@@ -328,7 +325,7 @@
             resize: none;
             outline: none;
             min-height: 120px;
-            word-wrap: break-word; /* Ensure long words break */
+            word-wrap: break-word;
         }
         
         textarea::placeholder, input::placeholder { color: rgba(255,255,255,0.2); }
@@ -363,27 +360,35 @@
             opacity: 0.7; cursor: not-allowed; transform: none;
         }
 
+        /* --- STYLISH DOWNLOAD BUTTON --- */
         .btn-download {
-            margin-top: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 25px;
+            background: linear-gradient(90deg, #00f2ea, #7b2cbf);
             color: white;
-            padding: 10px 24px;
+            padding: 14px 32px;
             border-radius: 50px;
             cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            transition: all 0.2s;
+            gap: 12px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-decoration: none;
+            border: none;
+            box-shadow: 0 5px 20px rgba(0, 242, 234, 0.3);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
         .btn-download:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: var(--primary);
-            color: var(--primary);
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 242, 234, 0.5);
+            filter: brightness(1.1);
+        }
+        
+        .btn-download:active {
+            transform: scale(0.98);
         }
 
         .output-box {
@@ -393,7 +398,6 @@
         
         .result-text {
             color: var(--text-main);
-            /* Markdown styling support */
         }
         .result-text p { margin-bottom: 0.8em; line-height: 1.7; }
         .result-text strong { color: var(--primary); }
@@ -418,7 +422,69 @@
             margin-bottom: 10px;
         }
 
-        /* Loading State */
+        /* --- GENERATING ANIMATION (Holographic Ring) --- */
+        .gen-anim-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 350px;
+            width: 100%;
+            position: relative;
+        }
+
+        .gen-ring {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid transparent;
+            border-top-color: var(--primary);
+            animation: spinRing 2s linear infinite;
+        }
+        
+        .gen-ring:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            border-top-color: var(--secondary);
+            animation: spinRing 1.5s linear infinite reverse;
+        }
+
+        .gen-core {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--primary);
+            animation: pulseCore 1s ease-in-out infinite alternate;
+        }
+
+        .gen-text {
+            margin-top: 100px; /* Spacing below rings */
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--primary);
+            font-weight: 700;
+            animation: pulseText 1.5s infinite;
+        }
+
+        @keyframes spinRing {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulseCore {
+            0% { transform: scale(0.8); opacity: 0.7; }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
+
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Loading State (Btn Spinner) */
         .loader {
             width: 20px; height: 20px;
             border: 2px solid rgba(0,0,0,0.2);
@@ -445,12 +511,12 @@
         @media (max-width: 768px) {
             body { 
                 flex-direction: column; 
-                position: fixed; /* Fix body to prevent rubber-band scroll on iOS */
+                position: fixed; 
                 inset: 0;
             }
             .sidebar {
                 width: 100%; 
-                height: 70px; /* Fixed height for bottom nav */
+                height: 70px; 
                 position: fixed; 
                 bottom: 0; 
                 left: 0;
@@ -481,7 +547,7 @@
                 padding: 8px 12px; 
                 font-size: 0.65rem; 
                 border-radius: 8px; 
-                min-width: 60px; /* Touch target size */
+                min-width: 60px;
             }
             .nav-item span { display: block; font-weight: 500; font-size: 0.65rem; text-align: center; }
             .nav-item svg { width: 20px; height: 20px; }
@@ -501,14 +567,14 @@
             }
             
             .page-title h2 { font-size: 1.2rem; }
-            .page-title p { display: none; /* Hide subtitle on mobile to save space */ }
+            .page-title p { display: none; }
             
             .content-area { 
                 padding: 16px; 
-                /* Padding bottom = Nav Height (70px) + Extra Space (40px) */
-                padding-bottom: 110px; 
+                /* Increased padding bottom to prevent content hiding behind nav */
+                padding-bottom: 200px; 
                 width: 100%;
-                -webkit-overflow-scrolling: touch; /* Smooth scroll iOS */
+                -webkit-overflow-scrolling: touch; 
             }
             
             .mobile-back-btn { display: flex; font-size: 0.8rem; padding: 6px 10px; }
@@ -516,7 +582,6 @@
             
             .glass-panel { padding: 16px; border-radius: 16px; }
             
-            /* Make text inputs smaller on mobile to prevent zoom */
             textarea, input[type="text"] { font-size: 16px; } 
         }
     </style>
@@ -661,6 +726,7 @@
                         <div class="panel-header">
                             <span class="label">Text to Translate</span>
                             <select id="opt-lang" class="control-select">
+                                <option value="English">English</option>
                                 <option value="Hindi">Hindi</option>
                                 <option value="Punjabi">Punjabi</option>
                                 <option value="Spanish">Spanish</option>
@@ -908,7 +974,7 @@
                     }
                 } catch (err) {
                     console.error(err);
-                    outputContainer.innerHTML = `<span style="color:#ff4444; background: rgba(255,0,0,0.1); padding: 10px; border-radius: 8px;">Error: ${err.message}</span>`;
+                    outputContainer.innerHTML = `<span style="color:#ff4444; background: rgba(255,0,0,0.1); padding: 10px; border-radius: 8px;">Error: ${err.message}. Please try again.</span>`;
                 } finally {
                     // Reset UI
                     btn.disabled = false;
@@ -948,6 +1014,11 @@
                     const lang = document.getElementById('opt-lang').value;
                     systemInstruction = `You are a professional translator. Translate accurately to ${lang}.`;
                     prompt = `Translate this text:\n\n${input}`;
+                    
+                    // Update Output Label with Target Language
+                    try {
+                        document.querySelector('#out-translator').previousElementSibling.querySelector('.label').textContent = 'Translated to ' + lang;
+                    } catch(e) {}
                 }
 
                 // Call Gemini 2.5 Flash
@@ -969,25 +1040,54 @@
                 container.innerHTML = marked.parse(resultText);
             }
 
-            // --- IMAGE LOGIC ---
+            // --- IMAGE LOGIC (With Animation) ---
             async handleImageGeneration(input, container) {
-                container.innerHTML = '<span style="opacity:0.7; font-style:italic">Generating high-res visual with Imagen 3...</span>';
+                // Show Animated Loader
+                container.innerHTML = `
+                    <div class="gen-anim-container">
+                        <div class="gen-ring"></div>
+                        <div class="gen-ring"></div>
+                        <div class="gen-core"></div>
+                        <p class="gen-text">Constructing Visual Data...</p>
+                    </div>
+                `;
 
-                const response = await fetch(`${IMAGE_API_URL}?key=${API_KEY}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        instances: [{ prompt: input }],
-                        parameters: { sampleCount: 1 }
-                    })
-                });
+                try {
+                    // 1. Attempt with User API Key (Google Imagen)
+                    const response = await fetch(`${IMAGE_API_URL}?key=${API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            instances: [{ prompt: input }],
+                            parameters: { sampleCount: 1 }
+                        })
+                    });
 
-                if (!response.ok) throw new Error(`Image API Error: ${response.status}`);
+                    if (!response.ok) throw new Error(`Google API Error: ${response.status}`);
 
-                const data = await response.json();
-                const base64Image = data.predictions[0].bytesBase64Encoded;
-                const imageUrl = `data:image/png;base64,${base64Image}`;
-                
+                    const data = await response.json();
+                    const base64Image = data.predictions[0].bytesBase64Encoded;
+                    const imageUrl = `data:image/png;base64,${base64Image}`;
+                    
+                    this.displayImage(imageUrl, container);
+
+                } catch (googleError) {
+                    console.warn("Google Imagen failed, trying fallback...", googleError);
+                    
+                    // 2. Fallback to Pollinations AI (No Key Required)
+                    const seed = Math.floor(Math.random() * 1000);
+                    const fallbackUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(input)}?width=1024&height=1024&seed=${seed}&nologo=true`;
+                    
+                    const img = new Image();
+                    img.src = fallbackUrl;
+                    img.onload = () => this.displayImage(fallbackUrl, container);
+                    img.onerror = () => {
+                        container.innerHTML = `<span style="color:#ff4444">Error: Unable to generate image with either engine.</span>`;
+                    }
+                }
+            }
+
+            displayImage(imageUrl, container) {
                 const imgContainer = document.createElement('div');
                 imgContainer.className = 'result-image-container';
 
@@ -995,12 +1095,12 @@
                 img.src = imageUrl;
                 img.className = 'result-image';
                 
-                // Clear loading text
+                // Clear loading animation
                 container.innerHTML = '';
                 imgContainer.appendChild(img);
                 container.appendChild(imgContainer);
 
-                // Add Download Button
+                // Add Stylish Download Button
                 const dwnBtn = document.createElement('a');
                 dwnBtn.className = 'btn-download';
                 dwnBtn.innerHTML = `
